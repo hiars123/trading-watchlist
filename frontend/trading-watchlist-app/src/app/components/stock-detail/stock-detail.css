@@ -1,0 +1,106 @@
+/* frontend/src/app/components/stock-detail/stock-detail.component.css */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.back-button {
+  margin-bottom: 16px;
+}
+
+.stock-header {
+  margin-bottom: 24px;
+}
+
+.stock-header h1 {
+  margin: 0;
+  font-size: 36px;
+}
+
+.price-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.price-display .label {
+  font-size: 14px;
+  color: #666;
+}
+
+.price-display .price {
+  font-size: 32px;
+  font-weight: 700;
+  color: #4caf50;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.alert-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.alert-price {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.alert-distance {
+  font-size: 14px;
+}
+
+.add-alert-form {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+.add-alert-form mat-form-field {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.info-text {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.no-data {
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

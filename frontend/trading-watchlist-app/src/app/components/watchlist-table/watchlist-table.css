@@ -1,0 +1,75 @@
+/* frontend/src/app/components/watchlist-table/watchlist-table.component.css */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.subtitle {
+  color: #666;
+  margin-top: 4px;
+}
+
+.add-form {
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 200px 200px 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.stocks-table {
+  width: 100%;
+}
+
+.price {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.alert-price {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.distance {
+  font-weight: 600;
+}
+
+.no-data {
+  color: #999;
+}
+
+.no-stocks {
+  text-align: center;
+  padding: 48px !important;
+  color: #999;
+}
+
+.info-text {
+  margin-top: 16px;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,0 +1,109 @@
+<!-- frontend/src/app/components/stock-detail/stock-detail.component.html -->
+<div class="container" *ngIf="stock">
+  <button mat-button (click)="goBack()" class="back-button">
+    <mat-icon>arrow_back</mat-icon>
+    Zurück zur Watchlist
+  </button>
+
+  <mat-card class="stock-header">
+    <mat-card-header>
+      <mat-card-title>
+        <h1>{{stock.ticker}}</h1>
+      </mat-card-title>
+      <mat-card-subtitle>
+        Hinzugefügt: {{stock.addedAt | date:'dd.MM.yyyy'}}
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="price-display">
+        <span class="label">Aktueller Kurs</span>
+        <span class="price" *ngIf="stock.currentPrice">
+          ${{stock.currentPrice | number:'1.2-2'}}
+        </span>
+        <span class="no-data" *ngIf="!stock.currentPrice">—</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="details-grid">
+    <!-- Alerts Section -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>notifications</mat-icon>
+          Preisalarme
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="alerts-list">
+          <div *ngFor="let alert of stock.alerts" class="alert-item">
+            <div class="alert-info">
+              <span class="alert-price">${{alert.targetPrice | number:'1.2-2'}}</span>
+              <span *ngIf="calculateDistance(alert.targetPrice) as distance"
+                    [style.color]="getDistanceColor(distance)"
+                    class="alert-distance">
+                ({{distance > 0 ? '+' : ''}}{{distance | number:'1.2-2'}}%)
+              </span>
+            </div>
+            <button mat-icon-button color="warn" (click)="removeAlert(alert.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
+          <!-- Add Alert Form -->
+          <div class="add-alert-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Neuer Alarm ($)</mat-label>
+              <input matInput type="number" [(ngModel)]="newAlertPrice" placeholder="150.00">
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="addAlert()">
+              <mat-icon>add</mat-icon>
+              Hinzufügen
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notes Section -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>note</mat-icon>
+          Quelle & Setup
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Quelle</mat-label>
+          <input matInput [(ngModel)]="stock.source" (blur)="updateSource()" 
+                 placeholder="z.B. 10x Video vom 04.11.2025">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notizen</mat-label>
+          <textarea matInput [(ngModel)]="stock.notes" (blur)="updateNotes()" 
+                    rows="6" placeholder="Notizen zu 10x-Setups, Breakout-Levels, etc..."></textarea>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Screenshots Section -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>photo_camera</mat-icon>
+        Chart-Screenshots
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="info-text">Screenshot-Upload wird in der nächsten Version hinzugefügt.</p>
+      <p class="info-text">Tipp: Speichere deine Charts aktuell lokal und verlinke sie in den Notizen.</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="container" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>

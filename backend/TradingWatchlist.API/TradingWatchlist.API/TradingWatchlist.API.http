@@ -1,0 +1,6 @@
+@TradingWatchlist.API_HostAddress = http://localhost:5098
+
+GET {{TradingWatchlist.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
