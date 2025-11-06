@@ -1,1 +1,125 @@
-<p>watchlist-table works!</p>
+<!-- frontend/src/app/components/watchlist-table/watchlist-table.component.html -->
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>Trading Watchlist</h1>
+      <p class="subtitle">{{ stocks.length }} Aktien überwacht</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="showAddForm = true">
+      <mat-icon>add</mat-icon>
+      Aktie hinzufügen
+    </button>
+  </div>
+
+  <!-- Add Stock Form -->
+  <mat-card *ngIf="showAddForm" class="add-form">
+    <mat-card-header>
+      <mat-card-title>Neue Aktie hinzufügen</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Ticker</mat-label>
+          <input matInput [(ngModel)]="newStock.ticker" placeholder="z.B. AAPL">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Alarm-Preis ($)</mat-label>
+          <input matInput type="number" [(ngModel)]="newStock.initialAlertPrice" placeholder="150.00">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Quelle</mat-label>
+          <input matInput [(ngModel)]="newStock.source" placeholder="z.B. 10x Video vom 04.11.2025">
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="addStock()">Speichern</button>
+      <button mat-button (click)="showAddForm = false">Abbrechen</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Stocks Table -->
+  <mat-card>
+    <table mat-table [dataSource]="stocks" class="stocks-table">
+      <!-- Ticker Column -->
+      <ng-container matColumnDef="ticker">
+        <th mat-header-cell *matHeaderCellDef>Ticker</th>
+        <td mat-cell *matCellDef="let stock">
+          <button mat-button color="primary" (click)="viewDetails(stock)">
+            {{ stock.ticker }}
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Current Price Column -->
+      <ng-container matColumnDef="currentPrice">
+        <th mat-header-cell *matHeaderCellDef>Aktueller Kurs</th>
+        <td mat-cell *matCellDef="let stock">
+          <span *ngIf="stock.currentPrice" class="price">
+            ${{ stock.currentPrice | number:'1.2-2' }}
+          </span>
+          <span *ngIf="!stock.currentPrice" class="no-data">—</span>
+        </td>
+      </ng-container>
+
+      <!-- Next Alert Column -->
+      <ng-container matColumnDef="nextAlert">
+        <th mat-header-cell *matHeaderCellDef>Nächster Alarm</th>
+        <td mat-cell *matCellDef="let stock">
+          <span *ngIf="getClosestAlert(stock) as alert" class="alert-price">
+            ${{ alert.price | number:'1.2-2' }}
+          </span>
+          <span *ngIf="!getClosestAlert(stock)" class="no-data">—</span>
+        </td>
+      </ng-container>
+
+      <!-- Distance Column -->
+      <ng-container matColumnDef="distance">
+        <th mat-header-cell *matHeaderCellDef>Distanz</th>
+        <td mat-cell *matCellDef="let stock">
+          <span *ngIf="getClosestAlert(stock) as alert" 
+                [style.color]="getDistanceColor(alert.distance)"
+                class="distance">
+            {{ alert.distance > 0 ? '+' : '' }}{{ alert.distance | number:'1.2-2' }}%
+          </span>
+          <span *ngIf="!getClosestAlert(stock)" class="no-data">—</span>
+        </td>
+      </ng-container>
+
+      <!-- Alert Count Column -->
+      <ng-container matColumnDef="alertCount">
+        <th mat-header-cell *matHeaderCellDef>Alarme</th>
+        <td mat-cell *matCellDef="let stock">
+          <mat-chip>{{ stock.alerts.length }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+        <td mat-cell *matCellDef="let stock">
+          <button mat-icon-button color="warn" (click)="removeStock(stock.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- No data row -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-stocks" [attr.colspan]="displayedColumns.length">
+          Keine Aktien in der Watchlist. Füge deine erste Aktie hinzu!
+        </td>
+      </tr>
+    </table>
+  </mat-card>
+
+  <div class="info-text" *ngIf="stocks.length > 0">
+    <mat-icon>info</mat-icon>
+    Kurse werden jede Minute aktualisiert. Klicke auf einen Ticker für Details.
+  </div>
+</div>
