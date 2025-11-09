@@ -11,6 +11,7 @@ export interface Stock {
   source?: string;
   notes?: string;
   currentPrice?: number;
+  priceUpdatedAt?: Date;
   alerts: Alert[];
   screenshotCount: number;
 }

@@ -1,14 +1,31 @@
-<!-- frontend/src/app/components/watchlist-table/watchlist-table.component.html -->
+<!-- frontend/src/app/components/watchlist-table/watchlist-table.html -->
 <div class="container">
   <div class="header">
     <div>
       <h1>Trading Watchlist</h1>
       <p class="subtitle">{{ stocks.length }} Aktien überwacht</p>
+      <div class="refresh-status">
+        <span *ngIf="!isRefreshing && lastUpdated" class="last-update">
+          Aktualisiert {{ getTimeSinceUpdate(lastUpdated) }}
+        </span>
+        <span *ngIf="isRefreshing" class="refreshing">
+          🔄 Aktualisiere Kurse...
+        </span>
+        <span *ngIf="!lastUpdated && !isRefreshing" class="last-update">
+          Klicke "Jetzt aktualisieren" um Kurse zu laden
+        </span>
+      </div>
     </div>
-    <button mat-raised-button color="primary" (click)="showAddForm = true">
-      <mat-icon>add</mat-icon>
-      Aktie hinzufügen
-    </button>
+    <div class="header-actions">
+      <button mat-raised-button color="accent" (click)="loadStocks(true)" [disabled]="isRefreshing">
+        <mat-icon>refresh</mat-icon>
+        Jetzt aktualisieren
+      </button>
+      <button mat-raised-button color="primary" (click)="showAddForm = true">
+        <mat-icon>add</mat-icon>
+        Aktie hinzufügen
+      </button>
+    </div>
   </div>
 
   <!-- Add Stock Form -->
@@ -57,10 +74,19 @@
       <ng-container matColumnDef="currentPrice">
         <th mat-header-cell *matHeaderCellDef>Aktueller Kurs</th>
         <td mat-cell *matCellDef="let stock">
-          <span *ngIf="stock.currentPrice" class="price">
-            ${{ stock.currentPrice | number:'1.2-2' }}
-          </span>
-          <span *ngIf="!stock.currentPrice" class="no-data">—</span>
+          <div class="price-cell">
+            <span *ngIf="stock.currentPrice" 
+                  class="price"
+                  [ngClass]="getPriceChangeClass(stock)">
+              ${{ stock.currentPrice | number:'1.2-2' }}
+            </span>
+            <span *ngIf="!stock.currentPrice" class="no-data">—</span>
+            <small class="price-timestamp" 
+                   *ngIf="stock.priceUpdatedAt"
+                   [style.color]="getUpdateStatusColor(stock.priceUpdatedAt)">
+              {{ getTimeSinceUpdate(stock.priceUpdatedAt) }}
+            </small>
+          </div>
         </td>
       </ng-container>
 

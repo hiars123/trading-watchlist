@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+// backend/TradingWatchlist.Infrastructure/Services/WatchlistService.cs
+using Microsoft.EntityFrameworkCore;
 using TradingWatchlist.Core.DTOs;
 using TradingWatchlist.Core.Interfaces;
 using TradingWatchlist.Core.Models;
@@ -25,9 +27,12 @@ public class WatchlistService : IWatchlistService
             .ToListAsync();
 
         var tickers = stocks.Select(s => s.Ticker).ToList();
-        var prices = await _priceService.GetMultiplePricesAsync(tickers);
+        var pricesWithTimestamp = await GetPricesWithTimestamp(tickers);
 
-        return stocks.Select(s => MapToDto(s, prices.GetValueOrDefault(s.Ticker))).ToList();
+        return stocks.Select(s => MapToDto(s, 
+            pricesWithTimestamp.GetValueOrDefault(s.Ticker).price,
+            pricesWithTimestamp.GetValueOrDefault(s.Ticker).timestamp
+        )).ToList();
     }
 
     public async Task<StockDto?> GetStockByIdAsync(int id)
@@ -40,7 +45,23 @@ public class WatchlistService : IWatchlistService
         if (stock == null) return null;
 
         var priceQuote = await _priceService.GetCurrentPriceAsync(stock.Ticker);
-        return MapToDto(stock, priceQuote?.Price);
+        return MapToDto(stock, priceQuote?.Price, priceQuote?.Timestamp);
+    }
+
+    private async Task<Dictionary<string, (decimal? price, DateTime? timestamp)>> GetPricesWithTimestamp(List<string> tickers)
+    {
+        var result = new Dictionary<string, (decimal? price, DateTime? timestamp)>();
+        var tasks = tickers.Select(async ticker =>
+        {
+            var quote = await _priceService.GetCurrentPriceAsync(ticker);
+            lock (result)
+            {
+                result[ticker] = (quote?.Price, quote?.Timestamp);
+            }
+        });
+
+        await Task.WhenAll(tasks);
+        return result;
     }
 
     public async Task<StockDto> AddStockAsync(CreateStockDto createDto)
@@ -98,7 +119,7 @@ public class WatchlistService : IWatchlistService
         return true;
     }
 
-    private StockDto MapToDto(Stock stock, decimal? currentPrice)
+    private StockDto MapToDto(Stock stock, decimal? currentPrice, DateTime? priceTimestamp = null)
     {
         return new StockDto
         {
@@ -108,6 +129,7 @@ public class WatchlistService : IWatchlistService
             Source = stock.Source,
             Notes = stock.Notes,
             CurrentPrice = currentPrice,
+            PriceUpdatedAt = priceTimestamp,
             ScreenshotCount = stock.Screenshots.Count,
             Alerts = stock.Alerts.Select(a => new AlertDto
             {

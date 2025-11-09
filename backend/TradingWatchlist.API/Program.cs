@@ -31,7 +31,12 @@ builder.Services.AddScoped<IPriceService, PriceService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<INoteService, NoteService>();
 
-builder.Services.AddHttpClient<IPriceService, PriceService>();
+// Configure HttpClient with User-Agent header for Yahoo Finance
+builder.Services.AddHttpClient<IPriceService, PriceService>(client =>
+{
+    client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 var app = builder.Build();
 
@@ -43,7 +48,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAngular");
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Deaktiviert für Development
 app.UseAuthorization();
 app.MapControllers();
 

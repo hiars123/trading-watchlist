@@ -1,3 +1,4 @@
+// backend/TradingWatchlist.Infrastructure/Services/AlertService.cs
 using Microsoft.EntityFrameworkCore;
 using TradingWatchlist.Core.DTOs;
 using TradingWatchlist.Core.Interfaces;

@@ -1,5 +1,4 @@
-﻿
-namespace TradingWatchlist.Core.Models;
+﻿namespace TradingWatchlist.Core.Models;
 
 public class Alert
 {

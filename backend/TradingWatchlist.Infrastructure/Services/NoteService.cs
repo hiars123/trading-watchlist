@@ -1,3 +1,5 @@
+
+// backend/TradingWatchlist.Infrastructure/Services/NoteService.cs
 using TradingWatchlist.Core.Interfaces;
 using TradingWatchlist.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

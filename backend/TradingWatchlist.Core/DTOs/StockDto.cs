@@ -1,3 +1,4 @@
+// backend/TradingWatchlist.Core/DTOs/StockDto.cs
 namespace TradingWatchlist.Core.DTOs;
 
 public class StockDto
@@ -8,6 +9,7 @@ public class StockDto
     public string? Source { get; set; }
     public string? Notes { get; set; }
     public decimal? CurrentPrice { get; set; }
+    public DateTime? PriceUpdatedAt { get; set; }
     public List<AlertDto> Alerts { get; set; } = new();
     public int ScreenshotCount { get; set; }
 }
